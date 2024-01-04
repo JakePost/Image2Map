@@ -12,6 +12,7 @@ import com.mojang.logging.LogUtils;
 import eu.pb4.sgui.api.GuiHelpers;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.luckperms.api.LuckPermsProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.decoration.ItemFrameEntity;
@@ -23,6 +24,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -59,7 +61,7 @@ public class Image2Map implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("image2map")
-                    .requires(source -> source.hasPermissionLevel(CONFIG.minPermLevel))
+                    .requires(source -> LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(source.getPlayer()).getCachedData().getPermissionData().checkPermission("image2map").asBoolean())
                     .then(literal("create")
                             .then(argument("width", IntegerArgumentType.integer(1))
                                     .then(argument("height", IntegerArgumentType.integer(1))
